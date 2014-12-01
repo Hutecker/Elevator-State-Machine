@@ -1,0 +1,15 @@
+
+/**
+*  \mainpage Elevator Simulator
+*
+* This is the documentation for the CSE 335 Elevator Simulator.
+* This describes the function calls necessary to utilize the
+* simulator. The Elevator Simulator is a graphical representation
+* of an elevator in a three story building. Support is provided for
+* motor control, position sensing, button support, and indicators.
+*
+* See the documentation for the classes CElevator and CElevatorController.
+* These are the classes users use for controlling the elevator.
+*
+* This documentation is generated from sources using Doxygen.
+*/

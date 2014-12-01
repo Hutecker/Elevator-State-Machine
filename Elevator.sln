@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Elevator", "Elevator\Elevator.vcxproj", "{411B7734-D1F1-4E99-B1DF-EADF183DD89F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{286B5844-1FD1-446F-82E5-D927225E8315} = {286B5844-1FD1-446F-82E5-D927225E8315}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ElevatorLib", "ElevatorLib\ElevatorLib.vcxproj", "{286B5844-1FD1-446F-82E5-D927225E8315}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testing", "Testing\Testing.vcxproj", "{2B49B3F8-5A23-4BC3-8A77-189C0B2B9671}"
+	ProjectSection(ProjectDependencies) = postProject
+		{411B7734-D1F1-4E99-B1DF-EADF183DD89F} = {411B7734-D1F1-4E99-B1DF-EADF183DD89F}
+		{286B5844-1FD1-446F-82E5-D927225E8315} = {286B5844-1FD1-446F-82E5-D927225E8315}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{411B7734-D1F1-4E99-B1DF-EADF183DD89F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{411B7734-D1F1-4E99-B1DF-EADF183DD89F}.Debug|Win32.Build.0 = Debug|Win32
+		{411B7734-D1F1-4E99-B1DF-EADF183DD89F}.Release|Win32.ActiveCfg = Release|Win32
+		{411B7734-D1F1-4E99-B1DF-EADF183DD89F}.Release|Win32.Build.0 = Release|Win32
+		{286B5844-1FD1-446F-82E5-D927225E8315}.Debug|Win32.ActiveCfg = Debug|Win32
+		{286B5844-1FD1-446F-82E5-D927225E8315}.Debug|Win32.Build.0 = Debug|Win32
+		{286B5844-1FD1-446F-82E5-D927225E8315}.Release|Win32.ActiveCfg = Release|Win32
+		{286B5844-1FD1-446F-82E5-D927225E8315}.Release|Win32.Build.0 = Release|Win32
+		{2B49B3F8-5A23-4BC3-8A77-189C0B2B9671}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2B49B3F8-5A23-4BC3-8A77-189C0B2B9671}.Debug|Win32.Build.0 = Debug|Win32
+		{2B49B3F8-5A23-4BC3-8A77-189C0B2B9671}.Release|Win32.ActiveCfg = Release|Win32
+		{2B49B3F8-5A23-4BC3-8A77-189C0B2B9671}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
