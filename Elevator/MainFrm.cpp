@@ -3,9 +3,12 @@
 //
 
 #include "stdafx.h"
+#include <memory>
 #include "ElevatorApp.h"
-
+#include "Controller.h"
 #include "MainFrm.h"
+
+using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -122,5 +125,6 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
  */
 void CMainFrame::Initialize()
 {
-    // Place any initialization code here...
+	auto controller = make_shared<CController>();
+	mElevator.SetController(controller);
 }
