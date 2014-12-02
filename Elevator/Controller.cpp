@@ -9,6 +9,8 @@
 
 /// The time the door remains open
 const double DoorOpenTime = 2.0;
+/// Time to wait to open the door
+const double WaitTime = 1.0;
 
 /**
 * \brief constructor
@@ -70,6 +72,18 @@ void CController::SetState(States state)
 
 	case DoorOpening:
 		SetDoorMotor(mFloor, 1);
+
+		WhatFloorToGoTo();
+		mFloors[mFloor - 1].SetPanel(false);
+		if (mGoingUp)
+		{
+			mFloors[mFloor - 1].SetUp(false);
+		}
+		else
+		{
+			mFloors[mFloor - 1].SetDown(false);
+		}
+
 		break;
 
 	case DoorOpen:
@@ -79,6 +93,17 @@ void CController::SetState(States state)
 	case DoorClosing:
 		SetDoorMotor(mFloor, -1);
 		break;
+
+	case Moving:
+		SetBrake(false);
+		SetMotorSpeed(mGoingUp ? 1 : -1);
+		break;
+
+	case Stop:
+		SetMotorSpeed(0);
+		SetBrake(true);
+		break;
+
 
 	default:
 		break;
@@ -116,6 +141,44 @@ void CController::Service()
 		{
 			SetState(DoorClosing);
 		}
+		break;
+
+	case Idle:
+	{
+		int floor = WhatFloorToGoTo();
+		if (floor == mFloor)
+		{
+			// Button pressed on this floor. Open the door
+			SetState(DoorOpening);
+		}
+		else if (floor != 0)
+		{
+			SetState(Moving);
+		}
+	}
+
+	case Moving:
+	{
+		int floor = WhatFloorToGoTo();
+		//assert(floor != 0);
+
+		// What's the position for that floor?
+		double floorPosition = (floor - 1) * FloorSpacing;
+		if (fabs(GetPosition() - floorPosition) < FloorTolerance)
+		{
+			mFloor = floor;
+			SetState(Stop);
+		}
+	}
+		break;
+
+	case Stop:
+	{
+		if (mStateTime >= WaitTime)
+		{
+			SetState(DoorOpening);
+		}
+	}
 		break;
 
 	default:
@@ -194,8 +257,19 @@ int CController::WhatFloorToGoTo()
 	}
 	else
 	{
-		// I'll leave this one for you
+		// We are going down, so try for a floor in that direction
+		int floor = WhatFloorDown();
+		if (floor != 0)
+			return floor;
 
+		// Guess we can't go down, so see if we need to go up
+		floor = WhatFloorUp();
+		if (floor != 0)
+		{
+			// Reverse the direction
+			mGoingUp = true;
+			return floor;
+		}
 	}
 
 	return 0;
@@ -239,6 +313,29 @@ int CController::WhatFloorUp()
  */
 int CController::WhatFloorDown()
 {
+	// What floor are we currently on?
+	// We stop with FloorTolerance of a floor. Suppose I am at position
+	// 3.42. That's just above 3.42 - 3.28 = 0.14 above floor 2, but it's within
+	// the tolerance, so we think of it as on floor 2.
+	int floor = int((GetPosition() + FloorTolerance) / FloorSpacing) + 1;
+
+	// Is there a floor to goto in the down direction that has the panel
+	// or the down button pressed?
+	for (int f = floor; f > 0; f--)
+	{
+		if (mFloors[f - 1].IsDown() || mFloors[f - 1].IsPanel())
+			return f;
+	}
+
+	// Is there a floor to go to in the down direction that has the up
+	// button pressed. We don't look at the current floor, though.
+	for (int f = floor - 1; f> 0; f--)
+	{
+		if (mFloors[f - 1].IsUp())
+			return f;
+	}
+
+	// If nothing, return 0;
 	return 0;
 }
 

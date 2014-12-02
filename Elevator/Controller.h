@@ -33,7 +33,7 @@ public:
 	int WhatFloorDown();
 
 	/// The state machine state1s
-	enum States { Idle, DoorOpening, DoorOpen, DoorClosing };
+	enum States { Idle, DoorOpening, DoorOpen, DoorClosing, Moving, Stop };
 
 private:
 	int    mFloor = 1;      ///< The current floor
