@@ -32,8 +32,8 @@ void CFloor::SetController(CController* controller)
 	mController = controller;
 }
 
-/** 
-* \brief Set the value of Up for a floor.
+/**
+* \brief Set the value of down for a floor.
 * \param s The new value for mUp
 */
 void CFloor::SetUp(bool s)
@@ -54,7 +54,7 @@ void CFloor::SetDown(bool s)
 
 /**
 * \brief Set the value of panel for a floor.
-* \param s The new value for mPanel
+* \param p The new value for mPanel
 */
 void CFloor::SetPanel(bool p)
 {

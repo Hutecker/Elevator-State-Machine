@@ -8,7 +8,7 @@ using namespace std;
 
 namespace Testing
 {
-    /*
+    /* \brief mock class
      * Mock controller class 
      */
     class CMockController : public CElevatorController

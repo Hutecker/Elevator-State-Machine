@@ -26,21 +26,21 @@ public:
 	* \returns mup
 	*/
 	bool IsUp() { return mUp; }
-	void SetUp(bool up);
+	void SetUp(bool s);
 
 	/**
 	* \brief get mdown
 	* \returns mdown
 	*/
 	bool IsDown() { return mDown; }
-	void SetDown(bool down);
+	void SetDown(bool s);
 
 	/**
 	* \brief get mpanel
 	* \returns mpanel
 	*/
 	bool IsPanel() { return mPanel; }
-	void SetPanel(bool panel);
+	void SetPanel(bool p);
 
 	/**
 	* \brief get mfloor
@@ -49,12 +49,11 @@ public:
 	int  GetFloor() { return mFloor; }
 	/**
 	* \brief set mfloor
-	* \param the value of floor
+	* \param floor the value of floor
 	*/
 	void SetFloor(int floor) { mFloor = floor; }
 
 	void SetController(CController* controller);
-	void SetUp();
 
 private:
 	/// whether we are going up
