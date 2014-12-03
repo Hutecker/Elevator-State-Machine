@@ -143,6 +143,16 @@ void CController::Service()
 
 	IsFireMode() ? mFireMode = true : mFireMode = false;
 
+	if (mFireMode)
+	{
+		for (int f = 1; f <= NumFloors; f++)
+		{
+			mFloors[f - 1].SetDown(false);
+			mFloors[f - 1].SetUp(false);
+			mFloors[f - 1].SetPanel(false);
+		}
+	}
+
 	switch (mState)
 	{
 	case DoorOpening:
@@ -202,6 +212,7 @@ void CController::Service()
 		if (mFireMode)
 		{
 			SetState(FiremanMoving);
+			mFloor = 5;
 		}
 
 		int floor = WhatFloorToGoTo();

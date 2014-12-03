@@ -235,6 +235,189 @@ namespace Testing
 			TestToFloor(&elevator, 1);
 		}
 
+		/*
+		* Test of fire mode Idle on first floor
+		*/
+		TEST_METHOD(TestCControllerFireModeIdleFirstFloor)
+		{
+			// Create a test object
+			CElevatorWnd elevator;
+
+			// Create a mock controller and install it
+			auto controller = std::make_shared<CController>();
+
+			elevator.SetController(controller);
+			Assert::IsTrue(controller->GetElevator() == &elevator);
+
+			// Turn on fire mode
+			elevator.PressFireMode();
+
+			elevator.Update(1.1);
+
+			// Elevator door should be open
+			Assert::IsTrue(elevator.IsDoorOpen(1));    // Should be open, now
+
+			// Turn off fire mode
+			elevator.PressFireMode();
+			elevator.Update(3.3);
+			Assert::IsTrue(elevator.IsDoorClosed(1));    // Should be closed, now
+
+			// Ensure elevator is back working, again
+			// Press the up button the second floor
+			elevator.PressCallUp(2);
+			TestToFloor(&elevator, 2);
+		}
+
+		/*
+		* Test of fire mode Idle on second floor
+		*/
+		TEST_METHOD(TestCControllerFireModeIdleSecondFloor)
+		{
+			// Create a test object
+			CElevatorWnd elevator;
+
+			// Create a mock controller and install it
+			auto controller = std::make_shared<CController>();
+
+			elevator.SetController(controller);
+			Assert::IsTrue(controller->GetElevator() == &elevator);
+
+			// Ensure elevator is back working, again
+			// Press the up button the second floor
+			elevator.PressCallUp(2);
+			TestToFloor(&elevator, 2);
+
+			// Turn on fire mode
+			elevator.PressFireMode();
+
+			// 3.3 seconds to move to floor, 1 to stop, 1 to open
+			elevator.Update(5.3);
+
+			// Elevator door should be open
+			Assert::IsTrue(elevator.IsDoorOpen(1));    // Should be open, now
+
+			// Turn off fire mode
+			elevator.PressFireMode();
+			elevator.Update(3.3);
+			Assert::IsTrue(elevator.IsDoorClosed(1));    // Should be closed, now
+
+			// Ensure elevator is back working, again
+			// Press the up button the second floor
+			elevator.PressCallUp(2);
+			TestToFloor(&elevator, 2);
+		}
+
+		/*
+		* Test of fire mode Door open on first floor
+		*/
+		TEST_METHOD(TestCControllerFireModeOpenFirstFloor)
+		{
+			// Create a test object
+			CElevatorWnd elevator;
+
+			// Create a mock controller and install it
+			auto controller = std::make_shared<CController>();
+
+			elevator.SetController(controller);
+			Assert::IsTrue(controller->GetElevator() == &elevator);
+
+			elevator.PressCallUp(1);
+			elevator.Update(1.1);
+			Assert::IsTrue(elevator.IsDoorOpen(1));    // Should be open, now
+
+			// Turn on fire mode
+			elevator.PressFireMode();
+
+			// Ensure it stays in fire mode for at least 3 seconds
+			elevator.Update(3);
+			Assert::IsTrue(elevator.IsDoorOpen(1));    // Should be open, now
+
+			// Turn off fire mode
+			elevator.PressFireMode();
+			elevator.Update(3.1);
+			Assert::IsTrue(elevator.IsDoorClosed(1));    // Should be closed, now
+
+			// Ensure elevator is back working, again
+			// Press the up button the second floor
+			elevator.PressCallUp(2);
+			TestToFloor(&elevator, 2);
+		}
+
+		/*
+		* Test of fire mode Door open on second floor
+		*/
+		TEST_METHOD(TestCControllerFireModeOpenSecondFloor)
+		{
+			// Create a test object
+			CElevatorWnd elevator;
+
+			// Create a mock controller and install it
+			auto controller = std::make_shared<CController>();
+
+			elevator.SetController(controller);
+			Assert::IsTrue(controller->GetElevator() == &elevator);
+
+			elevator.PressPanelFloor(2);
+			elevator.Update(5.3);
+			Assert::IsTrue(elevator.IsDoorOpen(2));    // Should be open, now
+
+			// Press fire mode
+			elevator.PressFireMode();
+
+			// 1 to close, 3.3 to move, 1 to stop, 1 to open
+			elevator.Update(6.3);
+			Assert::IsTrue(elevator.IsDoorClosed(2));    // Should be closed
+			Assert::IsTrue(elevator.IsDoorOpen(1));    // Should be open, now
+
+			// Turn off fire mode
+			elevator.PressFireMode();
+			elevator.Update(3.1);
+			Assert::IsTrue(elevator.IsDoorClosed(1));    // Should be closed, now
+
+			// Ensure elevator is back working, again
+			// Press the up button the second floor
+			elevator.PressCallUp(2);
+			TestToFloor(&elevator, 2);
+		}
+
+		/*
+		* Test of fire mode while moving
+		*/
+		TEST_METHOD(TestCControllerFireModeWhileMoving)
+		{
+			// Create a test object
+			CElevatorWnd elevator;
+
+			// Create a mock controller and install it
+			auto controller = std::make_shared<CController>();
+
+			elevator.SetController(controller);
+			Assert::IsTrue(controller->GetElevator() == &elevator);
+
+			elevator.PressPanelFloor(2);
+			elevator.Update(1.5);
+			Assert::IsTrue(elevator.GetVelocity() > 0);
+
+			// Press fire mode
+			elevator.PressFireMode();
+			elevator.Update(0.001);                 // Ensure elevator is serviced
+			Assert::IsTrue(elevator.GetVelocity() < 0);
+
+			// 1.5 to move, 1 to stop, 1 to open
+			elevator.Update(3.5);
+			Assert::IsTrue(elevator.IsDoorOpen(1));    // Should be open, now
+
+			// Turn off fire mode
+			elevator.PressFireMode();
+			elevator.Update(3.1);
+			Assert::IsTrue(elevator.IsDoorClosed(1));    // Should be closed, now
+
+			// Ensure elevator is back working, again
+			// Press the up button the second floor
+			elevator.PressCallUp(2);
+			TestToFloor(&elevator, 2);
+		}
+
 		/**
 		* \brief Handy test to ensure the process for a floor works correctly
 		*
