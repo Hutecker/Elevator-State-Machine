@@ -33,7 +33,10 @@ public:
 	int WhatFloorDown();
 
 	/// The state machine state1s
-	enum States { Idle, DoorOpening, DoorOpen, DoorClosing, Moving, Stop };
+	enum States {
+		Idle, DoorOpening, DoorOpen, DoorClosing, Moving, Stop,
+		FiremanDoorOpen, FiremanDoorClosing, FiremanMoving, FiremanDoorOpening,
+		FiremanStop};
 
 private:
 	int    mFloor = 1;      ///< The current floor
@@ -43,5 +46,6 @@ private:
 	/// An object for each floor
 	CFloor mFloors[NumFloors];
 	bool mGoingUp = true; ///< Whether we are going up or not
+	bool mFireMode = false; ///<Whether fireman mode is active or not
 };
 

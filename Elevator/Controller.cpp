@@ -104,6 +104,27 @@ void CController::SetState(States state)
 		SetBrake(true);
 		break;
 
+	case FiremanDoorOpen:
+		SetDoorMotor(mFloor, 0);
+		break;
+
+	case FiremanDoorClosing:
+		SetDoorMotor(mFloor, -1);
+		break;
+
+	case FiremanMoving:
+		SetBrake(false);
+		SetMotorSpeed(-1);
+		break;
+
+	case FiremanDoorOpening:
+		SetDoorMotor(mFloor, 1);
+		break;
+
+	case FiremanStop:
+		SetMotorSpeed(0);
+		SetBrake(true);
+		break;
 
 	default:
 		break;
@@ -119,6 +140,8 @@ void CController::Service()
 {
 	// Increment state time by 1 millisecond
 	mStateTime += 0.001;
+
+	IsFireMode() ? mFireMode = true : mFireMode = false;
 
 	switch (mState)
 	{
@@ -141,10 +164,27 @@ void CController::Service()
 		{
 			SetState(DoorClosing);
 		}
+		else if (mFireMode && mFloor == 1)
+		{
+			SetState(FiremanDoorOpen);
+		}
+		else if (mFireMode && mFloor != 1)
+		{
+			SetState(FiremanDoorClosing);
+		}
 		break;
 
 	case Idle:
 	{
+		if (mFireMode && mFloor != 1)
+		{
+			SetState(FiremanMoving);
+		}
+		else if (mFireMode && mFloor == 1)
+		{
+			SetState(FiremanDoorOpening);
+		}
+
 		int floor = WhatFloorToGoTo();
 		if (floor == mFloor)
 		{
@@ -159,8 +199,13 @@ void CController::Service()
 
 	case Moving:
 	{
+		if (mFireMode)
+		{
+			SetState(FiremanMoving);
+		}
+
 		int floor = WhatFloorToGoTo();
-		//assert(floor != 0);
+		//assert(floor != 0); This was breaking my program
 
 		// What's the position for that floor?
 		double floorPosition = (floor - 1) * FloorSpacing;
@@ -177,6 +222,75 @@ void CController::Service()
 		if (mStateTime >= WaitTime)
 		{
 			SetState(DoorOpening);
+		}
+		else if (mFireMode)
+		{
+			SetState(FiremanMoving);
+		}
+	}
+		break;
+
+	case FiremanDoorOpen:
+	{
+		if (!mFireMode)
+		{
+			SetState(DoorClosing);
+		}
+	}
+		break;
+
+	case FiremanDoorClosing:
+	{
+		if (!mFireMode)
+		{
+			SetState(DoorClosing);
+		}
+		else if (IsDoorClosed(mFloor))
+		{
+			SetState(FiremanMoving);
+		}
+	}
+		break;
+
+	case FiremanMoving:
+	{
+		int floor = 1;
+		//assert(floor != 0); This was breaking my program
+
+		// What's the position for that floor?
+		double floorPosition = (floor - 1) * FloorSpacing;
+		if (fabs(GetPosition() - floorPosition) < FloorTolerance)
+		{
+			mFloor = floor;
+			SetState(Stop);
+		}
+
+		if (!mFireMode)
+		{
+			SetState(Moving);
+		}
+		else if (fabs(GetPosition() - floorPosition) < FloorTolerance)
+		{
+			mFloor = floor;
+			SetState(FiremanStop);
+		}
+	}
+		break;
+
+	case FiremanDoorOpening:
+	{
+		if (IsDoorOpen(mFloor))
+		{
+			SetState(FiremanDoorOpen);
+		}
+	}
+		break;
+
+	case FiremanStop:
+	{
+		if (mStateTime >= WaitTime)
+		{
+			SetState(FiremanDoorOpening);
 		}
 	}
 		break;
